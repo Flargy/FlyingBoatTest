@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c75ec411d2a2a64ea83d3a89339effe, type: 3}
+  m_Name: Blue
+  m_EditorClassIdentifier: 
+  environmentalPrefabs:
+  - {fileID: 7603766686813033285, guid: c6d77822c35844c4787b66b77a7652f5, type: 3}
+  - {fileID: 8657913844867839861, guid: 185f7c79b365442479c46225d404c251, type: 3}
+  baseIslandMaterial: {fileID: 2100000, guid: 921b9777bc0d28746ba155fd42ed4209, type: 2}

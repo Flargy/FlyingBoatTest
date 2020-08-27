@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c75ec411d2a2a64ea83d3a89339effe, type: 3}
+  m_Name: Yellow
+  m_EditorClassIdentifier: 
+  environmentalPrefabs:
+  - {fileID: 7858860054185894710, guid: bc646a1e35b72504a848f657fab4e05f, type: 3}
+  - {fileID: 5666060443729254327, guid: 895710efd47d4614db85f96273833b6f, type: 3}
+  baseIslandMaterial: {fileID: 2100000, guid: 9243ee39a149fa246991643d80fc40b3, type: 2}
