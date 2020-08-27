@@ -7,27 +7,25 @@ public class BoatMovement : MonoBehaviour
     [SerializeField] float rotationSpeed = 10;
     [SerializeField] Transform meshTransform;
 
-    private Vector3 lookDirection = Vector3.zero;
-    private float rotationAmount = 0f;
 
-    private Quaternion startRotationForMesh;
     [SerializeField] private Vector3 shipRotationValue;
 
     private Coroutine rotationRoutine;
     private Quaternion shipRotation;
+    private Quaternion inverseRotation;
     private Quaternion currentRotationTargetValue;
     private bool coroutineRunning;
 
     void Start()
     {
-        startRotationForMesh = meshTransform.rotation;
         shipRotation = Quaternion.Euler(shipRotationValue);
+        inverseRotation = Quaternion.Inverse(shipRotation);
+
     }
 
     // Update is called once per frame
     void Update()   
     {
-        rotationAmount += Time.deltaTime * 0.05f;
        
         FaceTowardsDirection();
         transform.position += transform.forward * rotationSpeed * Time.deltaTime;
@@ -39,7 +37,6 @@ public class BoatMovement : MonoBehaviour
     /// </summary>
     private void FaceTowardsDirection()
     {
-        lookDirection = transform.position + WindManager.GetWindDirection();
 
         float angle = Vector3.SignedAngle(transform.forward, WindManager.GetWindDirection(), Vector3.up);
 
@@ -49,11 +46,19 @@ public class BoatMovement : MonoBehaviour
         }
         else
         {
-            if (coroutineRunning == true && transform.rotation != Quaternion.identity)
+            if(coroutineRunning == false && currentRotationTargetValue != Quaternion.identity)
+            {
+                currentRotationTargetValue = Quaternion.identity;
+                rotationRoutine = StartCoroutine(RotateMyMesh(currentRotationTargetValue));
+            }
+            if(coroutineRunning == true && currentRotationTargetValue != Quaternion.identity)
             {
                 StopCoroutine(rotationRoutine);
-                rotationRoutine = StartCoroutine(RotateMyMesh(Quaternion.identity));
+                currentRotationTargetValue = Quaternion.identity;
+                rotationRoutine = StartCoroutine(RotateMyMesh(currentRotationTargetValue));
             }
+
+            
         }
     }
 
@@ -65,30 +70,38 @@ public class BoatMovement : MonoBehaviour
         {
             
             transform.RotateAround(transform.position, Vector3.up, WindManager.GetWindStrength() * Time.deltaTime);
-            if (coroutineRunning == true && currentRotationTargetValue != shipRotation)
+
+            if(coroutineRunning == false && currentRotationTargetValue != shipRotation)
+            {
+                currentRotationTargetValue = shipRotation;
+
+                rotationRoutine = StartCoroutine(RotateMyMesh(shipRotation));
+            }
+            else if (coroutineRunning == true && currentRotationTargetValue != shipRotation)
             {
                 StopCoroutine(rotationRoutine);
-                rotationRoutine = StartCoroutine(RotateMyMesh(shipRotation));
                 currentRotationTargetValue = shipRotation;
-            }
-            else if(coroutineRunning == false && currentRotationTargetValue != transform.rotation)
-            {
+
                 rotationRoutine = StartCoroutine(RotateMyMesh(shipRotation));
-                currentRotationTargetValue = shipRotation;
             }
+
         }
         else
         {
             transform.RotateAround(transform.position, Vector3.up, -WindManager.GetWindStrength() * Time.deltaTime);
-            if (coroutineRunning == true && currentRotationTargetValue != Quaternion.Inverse(shipRotation))
+
+            if(coroutineRunning == false && currentRotationTargetValue != inverseRotation)
+            {
+                currentRotationTargetValue = inverseRotation;
+                rotationRoutine = StartCoroutine(RotateMyMesh(inverseRotation));
+            }
+            else if(coroutineRunning == true && currentRotationTargetValue != inverseRotation)
             {
                 StopCoroutine(rotationRoutine);
-                rotationRoutine = StartCoroutine(RotateMyMesh(Quaternion.Inverse(shipRotation)));
+                currentRotationTargetValue = inverseRotation;
+                rotationRoutine = StartCoroutine(RotateMyMesh(inverseRotation));
             }
-            else if (coroutineRunning == false && transform.rotation != currentRotationTargetValue)
-            {
-                rotationRoutine = StartCoroutine(RotateMyMesh(Quaternion.Inverse(shipRotation)));
-            }
+  
 
         }
     }
@@ -96,17 +109,17 @@ public class BoatMovement : MonoBehaviour
     private IEnumerator RotateMyMesh(Quaternion newRotation)
     {
         coroutineRunning = true;
-        Quaternion currentRotation = meshTransform.rotation;
+        Quaternion currentRotation = meshTransform.localRotation;
         float timer = 0f;
         float duration = 5f;
         while (timer < duration)
         {
             timer += Time.deltaTime;
-            meshTransform.rotation = Quaternion.Slerp(currentRotation, newRotation, timer / duration);
+            meshTransform.localRotation = Quaternion.Slerp(currentRotation, newRotation, timer / duration);
             yield return null;
         }
         coroutineRunning = false;
-        meshTransform.rotation = newRotation;
+        meshTransform.localRotation = newRotation;
     }
    
 }
