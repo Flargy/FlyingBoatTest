@@ -16,7 +16,8 @@ public class BoatMovement : MonoBehaviour
     private Quaternion currentRotationTargetValue;
     private bool coroutineRunning;
     private Vector3 inputDirection;
-    private float inputValue;
+    private Vector3 verticalInput = Vector3.zero;
+    private float horizontalInput;
 
     void Start()
     {
@@ -29,21 +30,14 @@ public class BoatMovement : MonoBehaviour
     void Update()   
     {
        
+        horizontalInput = Input.GetAxis("Horizontal");
+        verticalInput.y = Input.GetAxis("Vertical");
+
+        inputDirection.x = horizontalInput;
+
         FaceTowardsDirection();
-        transform.position += transform.forward * Time.deltaTime;
-        inputValue = Input.GetAxis("Horizontal");
-        if(inputValue < 0)
-        {
-            inputDirection = Vector3.left;
-        }
-        else if(inputValue > 0)
-        {
-            inputDirection = Vector3.right;
-        }
-        else
-        {
-            inputDirection = Vector3.zero;
-        }
+        transform.position += (transform.forward + verticalInput )* Time.deltaTime;
+
         
 
     }

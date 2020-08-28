@@ -66,7 +66,7 @@ public class WindManager : MonoBehaviour
             newWindDirection = new Vector3(Random.Range(min, max), 0, Random.Range(min, max));
         }
 
-        windStrenght = 1.0f;
+        windStrenght = 0.3f;
         windDirection = newWindDirection.normalized;
         
     }
