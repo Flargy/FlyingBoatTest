@@ -37,8 +37,8 @@ public class BoatMovement : MonoBehaviour
     /// </summary>
     private void FaceTowardsDirection()
     {
-
-        float angle = Vector3.SignedAngle(transform.forward, WindManager.GetWindDirection(), Vector3.up);
+       
+        float angle = Vector3.SignedAngle(transform.forward, WindManager.GetWind(), Vector3.up);
 
         if(angle > 5 || angle < -5)
         {
@@ -58,7 +58,6 @@ public class BoatMovement : MonoBehaviour
                 rotationRoutine = StartCoroutine(RotateMyMesh(currentRotationTargetValue));
             }
 
-            
         }
     }
 

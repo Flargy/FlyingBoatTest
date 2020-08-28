@@ -21,7 +21,7 @@ public class WindManager : MonoBehaviour
     [Range(40, 160)]
     [SerializeField] private int stormCooldown = 100;
 
-    private float windStrenght = 2f;
+    private float windStrenght = 1f;
     private float windDuration = 0;
     private Vector3 windDirection = Vector3.zero;
     private float min = -1;
@@ -51,11 +51,13 @@ public class WindManager : MonoBehaviour
     // Update is called once per frame
     private void StartNewWind()
     {
-        if(StopWinds() == true || StartStorm())
+        if (StopWinds() == true)
         {
             return;
+
         }
        
+
         windDuration = Random.Range(minimumWindDuration, maximumWindDuration);
         Vector3 newWindDirection = windDirection * -1;
 
@@ -64,17 +66,19 @@ public class WindManager : MonoBehaviour
             newWindDirection = new Vector3(Random.Range(min, max), 0, Random.Range(min, max));
         }
 
+        windStrenght = 1.0f;
         windDirection = newWindDirection.normalized;
-
+        
     }
 
     private bool StartStorm()
     {
-        if(stormAllowed == false || Random.Range(minimumStormDuration, maximumStormDuration) > oddsOfStorm)
+        if (stormAllowed == false || Random.Range(minimumStormDuration, maximumStormDuration) > oddsOfStorm)
         {
             return false;
         }
         //start wind
+        Debug.Log("storm");
 
         return true;
 
@@ -82,10 +86,9 @@ public class WindManager : MonoBehaviour
 
     private bool StopWinds()
     {
-        if (Random.Range(0, 100) < oddsOfNoWind)
+        if (Random.Range(1, 101) <= oddsOfNoWind)
         {
-            Debug.Log("no wind");
-            windDirection = Vector3.zero;
+            windStrenght = 0f;
             windDuration = Random.Range(minimumCalmWindDuration, maximumCalmWIndDuration);
             return true;
         }
@@ -101,6 +104,11 @@ public class WindManager : MonoBehaviour
     {
 
         return instance.windStrenght;
+    }
+
+    public static Vector3 GetWind()
+    {
+        return instance.windDirection * instance.windStrenght;
     }
 
 
