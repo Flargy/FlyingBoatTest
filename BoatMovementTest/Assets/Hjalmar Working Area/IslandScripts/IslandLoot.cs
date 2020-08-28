@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Loot")]
+[CreateAssetMenu(menuName = "ScriptableObjects/Loot")]
 public class IslandLoot : ScriptableObject
 {
     [SerializeField] private List<GameObject> lootPrefabs = new List<GameObject>();

@@ -54,7 +54,7 @@ public class IslandBase : MonoBehaviour
             }
         }
 
-        Material newMAt = myEnvironment.GetIslandMaterial();
+        Material newMAt = new Material(myEnvironment.GetIslandMaterial());
         foreach (MeshRenderer renderer in allMyRenderers)
         {
             renderer.sharedMaterial = newMAt;

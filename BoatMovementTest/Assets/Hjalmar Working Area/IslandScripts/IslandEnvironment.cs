@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu(menuName = "Environment")]
+[CreateAssetMenu(menuName = "ScriptableObjects/Environment")]
 public class IslandEnvironment : ScriptableObject
 {
     [SerializeField] private List<GameObject> environmentalPrefabs = new List<GameObject>();
