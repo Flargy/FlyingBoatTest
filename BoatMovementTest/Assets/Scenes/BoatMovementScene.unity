@@ -518,6 +518,10 @@ PrefabInstance:
       propertyPath: shipRotationValue.z
       value: 10
       objectReference: {fileID: 0}
+    - target: {fileID: 5760147784182574564, guid: 7ca3ee980f286ac45b68b4d12ffa100d, type: 3}
+      propertyPath: turnSpeed
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 5760147784182574565, guid: 7ca3ee980f286ac45b68b4d12ffa100d, type: 3}
       propertyPath: m_Name
       value: BoatHolder

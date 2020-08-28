@@ -1,12 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SocialPlatforms;
 
 public class BoatMovement : MonoBehaviour
 {
-    [SerializeField] float rotationSpeed = 10;
+    [SerializeField] float rotationSpeed = 10f;
     [SerializeField] Transform meshTransform;
-
 
     [SerializeField] private Vector3 shipRotationValue;
 
@@ -15,6 +15,8 @@ public class BoatMovement : MonoBehaviour
     private Quaternion inverseRotation;
     private Quaternion currentRotationTargetValue;
     private bool coroutineRunning;
+    private Vector3 inputDirection;
+    private float inputValue;
 
     void Start()
     {
@@ -28,7 +30,21 @@ public class BoatMovement : MonoBehaviour
     {
        
         FaceTowardsDirection();
-        transform.position += transform.forward * rotationSpeed * Time.deltaTime;
+        transform.position += transform.forward * Time.deltaTime;
+        inputValue = Input.GetAxis("Horizontal");
+        if(inputValue < 0)
+        {
+            inputDirection = Vector3.left;
+        }
+        else if(inputValue > 0)
+        {
+            inputDirection = Vector3.right;
+        }
+        else
+        {
+            inputDirection = Vector3.zero;
+        }
+        
 
     }
 
@@ -38,7 +54,7 @@ public class BoatMovement : MonoBehaviour
     private void FaceTowardsDirection()
     {
        
-        float angle = Vector3.SignedAngle(transform.forward, WindManager.GetWind(), Vector3.up);
+        float angle = Vector3.SignedAngle(transform.forward, WindManager.GetWind() + transform.localRotation * inputDirection, Vector3.up);
 
         if(angle > 5 || angle < -5)
         {
@@ -68,7 +84,7 @@ public class BoatMovement : MonoBehaviour
         if (angle > 0)
         {
             
-            transform.RotateAround(transform.position, Vector3.up, WindManager.GetWindStrength() * Time.deltaTime);
+            transform.RotateAround(transform.position, Vector3.up, (WindManager.GetWindStrength() + inputDirection.magnitude * rotationSpeed) * Time.deltaTime);
 
             if(coroutineRunning == false && currentRotationTargetValue != shipRotation)
             {
@@ -87,7 +103,7 @@ public class BoatMovement : MonoBehaviour
         }
         else
         {
-            transform.RotateAround(transform.position, Vector3.up, -WindManager.GetWindStrength() * Time.deltaTime);
+            transform.RotateAround(transform.position, Vector3.up, (-WindManager.GetWindStrength() - inputDirection.magnitude * rotationSpeed )* Time.deltaTime);
 
             if(coroutineRunning == false && currentRotationTargetValue != inverseRotation)
             {
