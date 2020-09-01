@@ -392,7 +392,7 @@ MonoBehaviour:
   maximumWindDuration: 15
   minimumCalmWindDuration: 30
   maximumCalmWIndDuration: 120
-  oddsOfNoWind: 20
+  oddsOfNoWind: 100
   minimumStormDuration: 30
   maximumStormDuration: 100
   oddsOfStorm: 0

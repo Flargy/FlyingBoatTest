@@ -42,32 +42,29 @@ public class WindManager : MonoBehaviour
 
     private void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            StartNewWind();
-        }
+        //if (Input.GetKeyDown(KeyCode.Space))
+        //{
+        //    StartNewWind();
+        //}
     }
 
     // Update is called once per frame
     private void StartNewWind()
     {
-        if (StopWinds() == true)
+        if (StopWinds() == false)
         {
-            return;
+            windDuration = Random.Range(minimumWindDuration, maximumWindDuration);
+            Vector3 newWindDirection = windDirection * -1;
 
+            while (Vector3.Dot(windDirection, newWindDirection) < 0.78f)
+            {
+                newWindDirection = new Vector3(Random.Range(min, max), 0, Random.Range(min, max));
+            }
+
+            windStrenght = 0.3f;
+            windDirection = newWindDirection.normalized;
         }
-       
-
-        windDuration = Random.Range(minimumWindDuration, maximumWindDuration);
-        Vector3 newWindDirection = windDirection * -1;
-
-        while (Vector3.Dot(windDirection, newWindDirection) < 0.78f)
-        {
-            newWindDirection = new Vector3(Random.Range(min, max), 0, Random.Range(min, max));
-        }
-
-        windStrenght = 0.3f;
-        windDirection = newWindDirection.normalized;
+        SendWind();
         
     }
 
@@ -88,11 +85,17 @@ public class WindManager : MonoBehaviour
     {
         if (Random.Range(1, 101) <= oddsOfNoWind)
         {
+            Debug.Log("no wind");
             windStrenght = 0f;
             windDuration = Random.Range(minimumCalmWindDuration, maximumCalmWIndDuration);
             return true;
         }
         return false;
+    }
+
+    private void SendWind()
+    {
+        BoatMovement.AffecteedByWind(instance.windDirection * instance.windStrenght);
     }
 
     public static Vector3 GetWindDirection()

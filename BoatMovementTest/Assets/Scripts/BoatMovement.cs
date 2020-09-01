@@ -5,9 +5,10 @@ using UnityEngine.SocialPlatforms;
 
 public class BoatMovement : MonoBehaviour
 {
-    [SerializeField] float rotationSpeed = 10f;
-    [SerializeField] Transform meshTransform;
-
+    private static BoatMovement instance;
+    [SerializeField] private float rotationSpeed = 10.0f;
+    [SerializeField] private float maxSpeed = 5.0f;
+    [SerializeField] private Transform meshTransform;
     [SerializeField] private Vector3 shipRotationValue;
 
     private Coroutine rotationRoutine;
@@ -17,29 +18,83 @@ public class BoatMovement : MonoBehaviour
     private bool coroutineRunning;
     private Vector3 inputDirection;
     private Vector3 verticalInput = Vector3.zero;
+    private Vector3 windEffect;
     private float horizontalInput;
+    private float horizontalTurnSpeed;
+    private float lastHorizontalInputValue;
+    private float currentSpeed = 1.0f;
+    private float speedIncreaseInput = 0.0f;
 
     void Start()
     {
         shipRotation = Quaternion.Euler(shipRotationValue);
         inverseRotation = Quaternion.Inverse(shipRotation);
+        if(instance == null)
+        {
+            instance = this;
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
 
     }
 
     // Update is called once per frame
     void Update()   
     {
-       
-        horizontalInput = Input.GetAxis("Horizontal");
-        verticalInput.y = Input.GetAxis("Vertical");
-
-        inputDirection.x = horizontalInput;
-
+        PlayerDirectionInput();
         FaceTowardsDirection();
-        transform.position += (transform.forward + verticalInput )* Time.deltaTime;
+        MoveShip();
+    }
 
-        
+    private void PlayerDirectionInput()
+    {
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+        verticalInput.y = Input.GetAxisRaw("Vertical");
+        speedIncreaseInput = Input.GetAxisRaw("Jump");
 
+        if (Mathf.Approximately(horizontalInput, 0.0f) == false)
+        {
+            horizontalTurnSpeed += horizontalInput * Time.deltaTime * 5.0f;
+            horizontalTurnSpeed = Mathf.Clamp(horizontalTurnSpeed, -1.0f, 1.0f);
+            lastHorizontalInputValue = horizontalInput;
+        }
+        else if (Mathf.Approximately(horizontalTurnSpeed, 0.0f) == false)
+        {
+            horizontalTurnSpeed -= lastHorizontalInputValue * Time.deltaTime * 5.0f;
+            if (Mathf.Abs(horizontalTurnSpeed) < 0.1f)
+            {
+                horizontalTurnSpeed = 0.0f;
+            }
+        }
+
+        if (Mathf.Approximately(speedIncreaseInput, 1.0f) && currentSpeed < maxSpeed)
+        {
+            currentSpeed += maxSpeed * 0.1f * Time.deltaTime;
+            currentSpeed = Mathf.Clamp(currentSpeed, 1, maxSpeed);
+        }
+        else if(Mathf.Approximately(speedIncreaseInput, 0) && Mathf.Approximately(currentSpeed, 1.0f) == false)
+        {
+            currentSpeed -= maxSpeed * 0.1f * Time.deltaTime;
+            if(currentSpeed < 1.0f)
+            {
+                currentSpeed = 1.0f;
+            }
+        }
+
+        inputDirection.x = horizontalTurnSpeed;
+
+    }
+
+    private void MoveShip()
+    {
+        transform.position += (transform.forward + verticalInput) * Time.deltaTime * currentSpeed;
+    }
+
+    public static void AffecteedByWind(Vector3 wind)
+    {
+        instance.windEffect = wind;
     }
 
     /// <summary>
@@ -48,7 +103,7 @@ public class BoatMovement : MonoBehaviour
     private void FaceTowardsDirection()
     {
        
-        float angle = Vector3.SignedAngle(transform.forward, WindManager.GetWind() + transform.localRotation * inputDirection, Vector3.up);
+        float angle = Vector3.SignedAngle(transform.forward, windEffect + transform.localRotation * inputDirection, Vector3.up);
 
         if(angle > 5 || angle < -5)
         {
@@ -72,7 +127,7 @@ public class BoatMovement : MonoBehaviour
     }
 
 
-    void RotateMyShip(float angle)
+    private void RotateMyShip(float angle)
     {
 
         if (angle > 0)
